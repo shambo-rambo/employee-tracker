@@ -55,4 +55,55 @@ function mainMenu() {
     });
 }
 
+const Department = require('./models/department');
+
+function viewDepartments() {
+    Department.findAll()
+        .then((departments) => {
+            console.log('All Departments');
+            departments.forEach((department) => console.log(department.name));
+            mainMenu();
+        })
+        .catch((error) => {
+            console.error('Error: ' + error);
+            mainMenu();
+        });
+}
+
+function addDepartment() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'name',
+            message: 'What is the name of the department?',
+            validate: (name) => {
+                if (name) {
+                    return true;
+                } else {
+                    console.log('Please enter a department name.');
+                    return false;
+                }
+            }
+        }
+    ])
+        .then((answer) => {
+            Department.create({
+                name: answer.name
+            })
+                .then(() => {
+                    console.log(`Added ${answer.name} to the database.`);
+                    mainMenu();
+                })
+                .catch((error) => {
+                    console.error('Error: ' + error);
+                    mainMenu();
+                });
+        })
+        .catch((error) => {
+            console.error('Error: ' + error);
+            mainMenu();
+        });
+}
+
+
 mainMenu();
